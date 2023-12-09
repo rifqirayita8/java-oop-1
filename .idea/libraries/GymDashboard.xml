@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="GymDashboard">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/GymDashboard.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

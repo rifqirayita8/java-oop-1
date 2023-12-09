@@ -1,20 +1,29 @@
 package GUI;
 
 //import .*;
-
 import javax.swing.ComboBoxModel;
 import GUI.GUIInstructor;
+import com.toedter.calendar.JDateChooser;
 import gymClass.Instructor;
+import gymClass.Koneksi;
 import gymClass.Training;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 /**
  *
  * @author Adam R
@@ -26,13 +35,14 @@ public class Details extends javax.swing.JFrame {
      */
     public Details() {
         initComponents();
-
-        setselectTrainer();
+        JDateChooser kalender = new JDateChooser();
+//        setselectTrainer();
 
     }
+
     /**
-    * Populates the 'selectTrainer' combo box with instructor names.
-    */
+     * Populates the 'selectTrainer' combo box with instructor names.
+     */
    private void setselectTrainer(){
         for(int i=0;i<GUIInstructor.dataInstuctor().size();i++) {
             selectTrainer.addItem(GUIInstructor.dataInstuctor().get(i).getName());
@@ -52,9 +62,13 @@ public class Details extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         selectTrainer = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tableTraining = new javax.swing.JTable();
+        btnTambah = new javax.swing.JButton();
+        jLatihan = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        tSelesai = new javax.swing.JTextField(20);
+        tMulai = new javax.swing.JTextField(20);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -66,28 +80,32 @@ public class Details extends javax.swing.JFrame {
 
         jLabel3.setText("Nama Trainer :");
 
-        selectTrainer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectTrainerActionPerformed(evt);
+        selectTrainer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                selectTrainerMouseClicked(evt);
             }
         });
 
-        jButton1.setText("Tambah");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnTambah.setText("Tambah");
+        btnTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnTambahActionPerformed(evt);
             }
         });
 
-        tableTraining.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+        jLatihan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cardio", "Easy Arms", "Lower Abs", "Arms and Abs" }));
 
-            },
-            new String [] {
-                "Latihan", "Tanggal Mulai", "Tanggal Selesai"
+        jLabel4.setText("Jenis Latihan");
+
+        jLabel5.setText("Tanggal Mulai");
+
+        jLabel6.setText("Tanggal Selesai");
+
+        tSelesai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tSelesaiActionPerformed(evt);
             }
-        ));
-        jScrollPane1.setViewportView(tableTraining);
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -101,16 +119,24 @@ public class Details extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane1)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel4))
+                                .addGap(35, 35, 35)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLatihan, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(tSelesai)
+                                    .addComponent(tMulai))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
                                 .addComponent(selectTrainer, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))))
@@ -121,62 +147,145 @@ public class Details extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
-                .addGap(9, 9, 9)
+                .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(selectTrainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addGap(23, 23, 23)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addContainerGap(92, Short.MAX_VALUE))
+                    .addComponent(jLabel3)
+                    .addComponent(jLatihan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(tMulai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(tSelesai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(40, 40, 40)
+                .addComponent(btnTambah)
+                .addContainerGap(98, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
-    /**
-     * Handles the 'Tambah' button click event.
-     * It sets userTrainer and namaTrainer variables and makes the 'todolist' frame visible.
-     * @param evt The action event.
-     */
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        
-        MainMenu.todolist.setVisible(true);  
-        int index = selectTrainer.getSelectedIndex();
-        Register.userTrainer = GUIInstructor.dataInstuctor().get(index).getDataTrainer();
-        Register.namaTrainer = GUIInstructor.dataInstuctor().get(index).getName();
-         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
-    * Handles the selection of a trainer from the 'selectTrainer' combo box.
-    * It updates the table with training details based on the selected trainer.
-    * @param evt The action event.
-    */
-    private void selectTrainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectTrainerActionPerformed
-        // TODO add your handling code here:
-        String selectedName = (String) selectTrainer.getSelectedItem(); // Dapatkan nama yang dipilih dari ComboBox
-        int index = selectTrainer.getSelectedIndex();
-        System.out.println(index);
-        DefaultTableModel tableTrain = (DefaultTableModel) tableTraining.getModel();
-        
-        int rows = tableTraining.getRowCount();
-        for(int i=0;i<rows;i++)
-        ((DefaultTableModel)tableTraining.getModel()).removeRow(i);
-        
-        for(int i = 0 ; i < GUIInstructor.dataInstuctor().get(index).getDataTrainer().size(); i++ ){
-            Object[] data = {GUIInstructor.dataInstuctor().get(index).getDataTrainer().get(i).getNameTrain(),
-            GUIInstructor.dataInstuctor().get(index).getDataTrainer().get(i).getDateStart(),
-            GUIInstructor.dataInstuctor().get(index).getDataTrainer().get(i).getDateEnd()
-            };
-            tableTrain.addRow(data);
+     * Handles the 'Tambah' button click event. It sets userTrainer and
+     * namaTrainer variables and makes the 'todolist' frame visible.
+     *
+     * @param evt The action event.
+     */
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+
+        try {
+            Object latihanTerpilih = jLatihan.getSelectedItem();
+            String latihanString = latihanTerpilih.toString();
+            String dateStart = tMulai.getText();
+            String dateEnd = tSelesai.getText();
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date startDate = dateFormat.parse(dateStart);
+            Date endDate = dateFormat.parse(dateEnd);
+
+            Object instructorTerpilih = selectTrainer.getSelectedItem();
+            String instructorString = instructorTerpilih.toString();
+
+            Koneksi koneksi = new Koneksi();
+            Connection conn = koneksi.getConnection();
+
+            String queryGetInstructor = "SELECT id FROM instructors WHERE name = ?";
+            try (PreparedStatement pstGetInstructor = conn.prepareStatement(queryGetInstructor)) {
+                pstGetInstructor.setString(1, instructorString);
+                ResultSet rs = pstGetInstructor.executeQuery();
+
+                if (rs.next()) {
+                    int instructorId = rs.getInt("id");
+
+                    String queryInsertTraining = "INSERT INTO training(instructor_id, training_name, start_date, end_date) VALUES (?, ?, ?, ?)";
+
+                    try (PreparedStatement pstInsertTraining = conn.prepareStatement(queryInsertTraining)) {
+                        // Mengatur parameter PreparedStatement dengan nilai
+                        pstInsertTraining.setInt(1, instructorId);
+                        pstInsertTraining.setString(2, latihanString);
+                        pstInsertTraining.setDate(3, new java.sql.Date(startDate.getTime()));
+                        pstInsertTraining.setDate(4, new java.sql.Date(endDate.getTime()));
+                        
+                        
+                        // Eksekusi query
+                        int rowsAffected = pstInsertTraining.executeUpdate();
+
+                        if (rowsAffected > 0) {
+                            System.out.println("Data berhasil disimpan ke dalam database.");
+                        } else {
+                            System.out.println("Gagal menyimpan data ke dalam database.");
+                        }
+                    }
+                } else {
+                        System.out.println("Instruktur tidak ditemukan.");
+                }
+            }
+        } catch (ParseException | SQLException e) {
+            e.printStackTrace();
         }
-    
-    }//GEN-LAST:event_selectTrainerActionPerformed
+//        
+//        MainMenu.todolist.setVisible(true);  
+//        int index = selectTrainer.getSelectedIndex();
+//        Register.userTrainer = GUIInstructor.dataInstuctor().get(index).getDataTrainer();
+//        Register.namaTrainer = GUIInstructor.dataInstuctor().get(index).getName();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnTambahActionPerformed
+
+    private void selectTrainerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectTrainerMouseClicked
+        // TODO add your handling code here:
+        try {
+            Koneksi koneksi = new Koneksi();
+            Connection conn = koneksi.getConnection();
+
+            // Query SQL untuk mengambil data dari tabel instructors
+            String query = "SELECT name FROM instructors";
+
+            // Membuat prepared statement untuk eksekusi query
+            PreparedStatement pst = conn.prepareStatement(query);
+
+            // Mengeksekusi query dan mendapatkan hasilnya
+            ResultSet rs = pst.executeQuery();
+
+//            // Mengambil metadata dari hasil query (nama kolom)
+//            int columnCount = rs.getMetaData().getColumnCount();
+//            String[] columnNames = new String[columnCount];
+//            for (int i = 0; i < columnCount; i++) {
+//                columnNames[i] = rs.getMetaData().getColumnName(i + 1);
+//            }
+            //bikin model gan
+            DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
+
+            while (rs.next()) {
+                String namaInstruktur = rs.getString("name");
+                comboBoxModel.addElement(namaInstruktur);
+            }
+
+            selectTrainer.setModel(comboBoxModel);
+
+//            String selectedName = (String) selectTrainer.getSelectedItem(); // Dapatkan nama yang dipilih dari ComboBox
+//        int index = selectTrainer.getSelectedIndex();
+//        System.out.println(index);
+//        DefaultTableModel tableTrain = (DefaultTableModel) tableTraining.getModel();
+////        
+//        int rows = tableTraining.getRowCount();
+//        for(int i=0;i<rows;i++)
+//        ((DefaultTableModel)tableTraining.getModel()).removeRow(i);
+//        
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+    }//GEN-LAST:event_selectTrainerMouseClicked
+
+    private void tSelesaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tSelesaiActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tSelesaiActionPerformed
 
     /**
      * @param args the command line arguments
@@ -215,12 +324,16 @@ public class Details extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnTambah;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JComboBox<String> jLatihan;
     private javax.swing.JComboBox<String> selectTrainer;
-    private javax.swing.JTable tableTraining;
+    private javax.swing.JTextField tMulai;
+    private javax.swing.JTextField tSelesai;
     // End of variables declaration//GEN-END:variables
 }

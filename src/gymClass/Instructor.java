@@ -91,7 +91,12 @@ public class Instructor {
     public void setExperience(int experience) {
         this.experience = experience;
     }
-    
+
+//    @Override
+//    public String toString() {
+//        return "Instructor{" + "name=" + name + ", experience=" + experience + '}';
+//    }
+//    
     /**
      * Returns a string representation of the instructor, including their associated training programs.
      * @return A string representing the instructor and their training programs.
@@ -101,6 +106,8 @@ public class Instructor {
         return "Instructor{" + "name=" + name + ", experience=" + experience + ", dataTrainer=" + dataTrainer + '}';
     }
 
+       
+    
     /**
      * Adds a training program to the instructor's list of training programs.
      * @param T2 The training program to be added.

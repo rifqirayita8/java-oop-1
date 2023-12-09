@@ -20,6 +20,8 @@ import gymClass.Training;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.table.DefaultTableModel;
+
 public class Koneksi {
 
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -44,16 +46,14 @@ public class Koneksi {
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
             stmt = conn.createStatement();
 
-//            while (!conn.isClosed()) {
-//                showMenu();
-//            }
-//            stmt.close();
-//            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public Connection getConnection(){
+        return conn;
+    }
     public static String getSHA256Hash(String input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -72,11 +72,7 @@ public class Koneksi {
 
     public static void insertMember() {
         try {
-            // ambil input dari user
-//            System.out.print("Judul: ");
-//            String judul = input.readLine().trim();
-//            System.out.print("Pengarang: ");
-//            String pengarang = input.readLine().trim();
+
             if (stmt == null) {
                 stmt = conn.createStatement();
             }
@@ -122,69 +118,118 @@ public class Koneksi {
             return false;
         }
     }
+    
+    public void insertInstructor(String name, int experience){
+        
+       String query = "INSERT INTO instructors (name, experience) VALUES (?, ?)";
+        
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setInt(2, experience);
 
-    public class DatabaseManager {
-
-        private static final String JDBC_URL = "jdbc:mysql://localhost/gym";
-        private static final String USERNAME = "root";
-        private static final String PASSWORD = "";
-
-        public static void saveInstructors(List<Instructor> instructors) {
-            try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
-                for (Instructor instructor : instructors) {
-                    saveInstructor(connection, instructor);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            // Menjalankan query
+            preparedStatement.executeUpdate();
+            System.out.println("Data Instructor berhasil disimpan ke dalam database.");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.out.println("Terjadi kesalahan: " + ex.getMessage());
         }
-
-        public static void tambahInstructor(int id, List<Instructor> instructors) throws SQLException {
-            try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
-                String insertInstructorQuery = "INSERT INTO instructors (id, name, experience) VALUES (?, ?, ?)";
-                for (Instructor instructor : instructors) {
-                    try (PreparedStatement pstmt = connection.prepareStatement(insertInstructorQuery)) {
-                        pstmt.setInt(1, id);
-                        pstmt.setString(2, instructor.getName());
-                        pstmt.setInt(3, instructor.getExperience());
-                        pstmt.executeUpdate();
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private static void saveInstructor(Connection connection, Instructor instructor) throws SQLException {
-            String insertInstructorQuery = "INSERT INTO instructors (name, experience) VALUES (?, ?)";
-            try (PreparedStatement pstmt = connection.prepareStatement(insertInstructorQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                pstmt.setString(1, instructor.getName());
-                pstmt.setInt(2, instructor.getExperience());
-                pstmt.executeUpdate();
-
-                try (var generatedKeys = pstmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        int instructorId = generatedKeys.getInt(1);
-
-                        // Save training data
-                        saveTrainings(connection, instructorId, instructor.getTrainings());
-                    }
-                }
-            }
-        }
-
-        private static void saveTrainings(Connection connection, int instructorId, List<Training> trainings) throws SQLException {
-            String insertTrainingQuery = "INSERT INTO training (instructor_id, training_name, start_date, end_date) VALUES (?, ?, ?, ?)";
-            for (Training training : trainings) {
-                try (PreparedStatement pstmt = connection.prepareStatement(insertTrainingQuery)) {
-                    pstmt.setInt(1, instructorId);
-                    pstmt.setString(2, training.getNameTrain());
-                    pstmt.setDate(3, java.sql.Date.valueOf(training.getDateStart()));
-                    pstmt.setDate(4, java.sql.Date.valueOf(training.getDateEnd()));
-                    pstmt.executeUpdate();
-                }
-            }
-        }
-
     }
+//      public void displayDataInTable(DefaultTableModel tableModel, GUIInstructor guiInstance) {
+//        if (tableModel == null) {
+//            // Inisialisasi model default baru jika tableModel adalah null
+//            tableModel = new DefaultTableModel();
+//            guiInstance.setTableModel(tableModel);
+//        } else {
+//            // Bersihkan tabel sebelum menampilkan data baru
+//            tableModel.setRowCount(0);
+//        }
+//
+//        try {
+//            // Ganti nama_tabel sesuai dengan nama tabel Anda
+//            String query = "SELECT * FROM instructors";
+//            try (PreparedStatement preparedStatement = conn.prepareStatement(query);
+//                 ResultSet resultSet = preparedStatement.executeQuery()) {
+//
+//                int columnCount = resultSet.getMetaData().getColumnCount();
+//
+//                while (resultSet.next()) {
+//                    Object[] row = new Object[columnCount];
+//                    for (int i = 1; i <= columnCount; i++) {
+//                        row[i - 1] = resultSet.getObject(i);
+//                    }
+//                    tableModel.addRow(row);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    
+
+//    public class DatabaseManager {
+//
+//        private static final String JDBC_URL = "jdbc:mysql://localhost/gym";
+//        private static final String USERNAME = "root";
+//        private static final String PASSWORD = "";
+//
+//        public static void saveInstructors(List<Instructor> instructors) {
+//            try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
+//                for (Instructor instructor : instructors) {
+//                    saveInstructor(connection, instructor);
+//                }
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        public static void tambahInstructor(int id, List<Instructor> instructors) throws SQLException {
+//            try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
+//                String insertInstructorQuery = "INSERT INTO instructors (id, name, experience) VALUES (?, ?, ?)";
+//                for (Instructor instructor : instructors) {
+//                    try (PreparedStatement pstmt = connection.prepareStatement(insertInstructorQuery)) {
+//                        pstmt.setInt(1, id);
+//                        pstmt.setString(2, instructor.getName());
+//                        pstmt.setInt(3, instructor.getExperience());
+//                        pstmt.executeUpdate();
+//                    }
+//                }
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        private static void saveInstructor(Connection connection, Instructor instructor) throws SQLException {
+//            String insertInstructorQuery = "INSERT INTO instructors (name, experience) VALUES (?, ?)";
+//            try (PreparedStatement pstmt = connection.prepareStatement(insertInstructorQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+//                pstmt.setString(1, instructor.getName());
+//                pstmt.setInt(2, instructor.getExperience());
+//                pstmt.executeUpdate();
+//
+//                try (var generatedKeys = pstmt.getGeneratedKeys()) {
+//                    if (generatedKeys.next()) {
+//                        int instructorId = generatedKeys.getInt(1);
+//
+//                        // Save training data
+//                        saveTrainings(connection, instructorId, instructor.getTrainings());
+//                    }
+//                }
+//            }
+//        }
+//
+//        private static void saveTrainings(Connection connection, int instructorId, List<Training> trainings) throws SQLException {
+//            String insertTrainingQuery = "INSERT INTO training (instructor_id, training_name, start_date, end_date) VALUES (?, ?, ?, ?)";
+//            for (Training training : trainings) {
+//                try (PreparedStatement pstmt = connection.prepareStatement(insertTrainingQuery)) {
+//                    pstmt.setInt(1, instructorId);
+//                    pstmt.setString(2, training.getNameTrain());
+//                    pstmt.setDate(3, java.sql.Date.valueOf(training.getDateStart()));
+//                    pstmt.setDate(4, java.sql.Date.valueOf(training.getDateEnd()));
+//                    pstmt.executeUpdate();
+//                }
+//            }
+//        }
+//
+//    }
+     
 }

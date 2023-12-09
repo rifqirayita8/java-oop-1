@@ -32,7 +32,7 @@ public class FormPilih extends javax.swing.JFrame {
         initComponents();
         dataLatihanMember = new ArrayList<LatihanMember>();
         setselectMember();
-        setselectTrainer();
+//        setselectTrainer();
     }
     
     private void setselectMember(){
@@ -44,12 +44,12 @@ public class FormPilih extends javax.swing.JFrame {
     /**
     * Populates the 'selectTrainer' combo box with instructor names.
     */
-   private void setselectTrainer(){
-        for(int i=0;i<GUIInstructor.dataInstuctor().size();i++) {
-            selectTrainer.addItem(GUIInstructor.dataInstuctor().get(i).getName());
-        }
-          
-   }
+//   private void setselectTrainer(){
+//        for(int i=0;i<GUIInstructor.dataInstuctor().size();i++) {
+//            selectTrainer.addItem(GUIInstructor.dataInstuctor().get(i).getName());
+//        }
+//          
+//   }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -237,22 +237,22 @@ public class FormPilih extends javax.swing.JFrame {
     */
     private void selectTrainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectTrainerActionPerformed
         // TODO add your handling code here:
-        String selectedName = (String) selectTrainer.getSelectedItem(); // Dapatkan nama yang dipilih dari ComboBox
-        int index = selectTrainer.getSelectedIndex();
-        System.out.println(index);
-        DefaultTableModel tableTrain = (DefaultTableModel) tableTraining.getModel();
-        
-        int rows = tableTraining.getRowCount();
-        for(int i=0;i<rows;i++)
-        ((DefaultTableModel)tableTraining.getModel()).removeRow(i);
-        
-        for(int i = 0 ; i < GUIInstructor.dataInstuctor().get(index).getDataTrainer().size(); i++ ){
-            Object[] data = {GUIInstructor.dataInstuctor().get(index).getDataTrainer().get(i).getNameTrain(),
-            GUIInstructor.dataInstuctor().get(index).getDataTrainer().get(i).getDateStart(),
-            GUIInstructor.dataInstuctor().get(index).getDataTrainer().get(i).getDateEnd()
-            };
-            tableTrain.addRow(data);
-        }
+//        String selectedName = (String) selectTrainer.getSelectedItem(); // Dapatkan nama yang dipilih dari ComboBox
+//        int index = selectTrainer.getSelectedIndex();
+//        System.out.println(index);
+//        DefaultTableModel tableTrain = (DefaultTableModel) tableTraining.getModel();
+//        
+//        int rows = tableTraining.getRowCount();
+//        for(int i=0;i<rows;i++)
+//        ((DefaultTableModel)tableTraining.getModel()).removeRow(i);
+//        
+//        for(int i = 0 ; i < GUIInstructor.dataInstuctor().get(index).getDataTrainer().size(); i++ ){
+//            Object[] data = {GUIInstructor.dataInstuctor().get(index).getDataTrainer().get(i).getNameTrain(),
+//            GUIInstructor.dataInstuctor().get(index).getDataTrainer().get(i).getDateStart(),
+//            GUIInstructor.dataInstuctor().get(index).getDataTrainer().get(i).getDateEnd()
+//            };
+//            tableTrain.addRow(data);
+//        }
     
     }//GEN-LAST:event_selectTrainerActionPerformed
 

@@ -11,9 +11,14 @@ import javax.swing.table.DefaultTableModel;
 import java.time.LocalDate;
 import java.util.Random;
 import gymClass.Koneksi;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JTable;
+
 
 
 /*
@@ -31,17 +36,21 @@ public class GUIInstructor extends javax.swing.JFrame {
      */
     public Instructor[] allInstructors = new Instructor[5];
     private static List<Instructor> DataInstructor;
+    private DefaultTableModel tableModel;
 
     /**
      * Creates new form Instructor
      */
     public GUIInstructor() {
         initComponents();
-        DataInstructor = new LinkedList<Instructor>();
+        displayDataFromDatabase();
+//        Koneksi koneksi= new Koneksi();
+//        Koneksi.displayDataInTable(tableModel, this);
+      DataInstructor = new LinkedList<Instructor>();
 
-        String[] kolom = {"Nama", "Experience"};
+        String[] kolom = {"Nama", "Experience"};  
 
-        DefaultTableModel model = new DefaultTableModel(kolom, 0);
+  
 
         allInstructors[0] = new Instructor("Ali", 5);
         allInstructors[1] = new Instructor("Steven", 2);
@@ -49,16 +58,15 @@ public class GUIInstructor extends javax.swing.JFrame {
         allInstructors[3] = new Instructor("King", 3);
         allInstructors[4] = new Instructor("John", 6);
 
-        jTable1.setModel(model);
+ 
         for (int i = 0; i < allInstructors.length; i++) {
-            model.addRow(new Object[]{
-                allInstructors[i].getName(),
-                allInstructors[i].getExperience()
-            });
+           
+                allInstructors[i].getName();
+                allInstructors[i].getExperience();
             this.DataInstructor.add(allInstructors[i]);
 
         }
-
+//
         inputData();
     }
 
@@ -67,6 +75,8 @@ public class GUIInstructor extends javax.swing.JFrame {
      *
      * @return A LinkedList containing Instructor objects.
      */
+  
+     
     public static LinkedList<Instructor> dataInstuctor() {
         return (LinkedList<Instructor>) DataInstructor;
     }
@@ -74,6 +84,50 @@ public class GUIInstructor extends javax.swing.JFrame {
     /**
      * Initializes and adds training data to instructors.
      */
+      public void displayDataFromDatabase() {
+        try {
+            // Mendapatkan koneksi ke database (gunakan koneksi yang telah Anda buat)
+            Koneksi koneksi = new Koneksi();
+            Connection conn = koneksi.getConnection();
+
+            // Query SQL untuk mengambil data dari tabel instructors
+            String query = "SELECT name, experience FROM instructors";
+
+            // Membuat prepared statement untuk eksekusi query
+            PreparedStatement pst = conn.prepareStatement(query);
+
+            // Mengeksekusi query dan mendapatkan hasilnya
+            ResultSet rs = pst.executeQuery();
+
+            // Mengambil metadata dari hasil query (nama kolom)
+            int columnCount = rs.getMetaData().getColumnCount();
+            String[] columnNames = new String[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                columnNames[i] = rs.getMetaData().getColumnName(i + 1);
+            }
+
+            // Menggunakan DefaultTableModel untuk menyimpan data dan kolom
+            DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+            // Mengisi model dengan data dari hasil query
+            while (rs.next()) {
+                Object[] rowData = new Object[columnCount];
+                for (int i = 0; i < columnCount; i++) {
+                    rowData[i] = rs.getObject(i + 1);
+                }
+                model.addRow(rowData);
+            }
+
+            // Menetapkan model pada JTable
+            jTable1.setModel(model);
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    
+    
     public void inputData() {
         Training T1 = new Training("Arms and Abs", LocalDate.of(2022, 10, 15), LocalDate.of(2022, 11, 15));
         Training T2 = new Training("Lower Abs", LocalDate.of(2022, 11, 16), LocalDate.of(2022, 12, 16));
@@ -91,13 +145,13 @@ public class GUIInstructor extends javax.swing.JFrame {
 
         DataInstructor.get(4).addTraining(T3);
         System.out.println("Data Instructor  :" + DataInstructor);
-//          for( int i = 0 ; i < DataInstructor.size() ; i++ ){
+          for( int i = 0 ; i < DataInstructor.size() ; i++ ){
 
-//          
-//                 DataInstructor.get(i).addTraining(T1);
-//                 
-//                 
-//          }
+          
+                 DataInstructor.get(i).addTraining(T1);
+                 
+                 
+          }
     }
 
     
@@ -134,15 +188,16 @@ public class GUIInstructor extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2"
             }
         ));
+        jTable1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jScrollPane1.setViewportView(jTable1);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 420, 170));
@@ -202,12 +257,22 @@ public class GUIInstructor extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void btn_submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_submitActionPerformed
+        String name= FieldNama.getText().trim();
+        String experience= FieldExperience.getText().trim();
+        
         try {
-            // TODO add your handling code here:
-            Koneksi.DatabaseManager.tambahInstructor(0, DataInstructor);
-        } catch (SQLException ex) {
-            Logger.getLogger(GUIInstructor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            int experienceInt= Integer.parseInt(experience);
+            
+            Koneksi koneksi= new Koneksi();
+            
+            koneksi.insertInstructor(name, experienceInt);
+//            // TODO add your handling code here:
+//            Koneksi.DatabaseManager.tambahInstructor(0, DataInstructor);
+//        } catch (SQLException ex) {
+//            Logger.getLogger(GUIInstructor.class.getName()).log(Level.SEVERE, null, ex);
+       }catch(NumberFormatException e){
+           e.printStackTrace();
+       }
 
     }//GEN-LAST:event_btn_submitActionPerformed
 

@@ -5,17 +5,18 @@
         <group>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/GUIInstructor.java</file>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/FormPilihTraining.java</file>
-            <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/Register.java</file>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/gymClass/LatihanMember.java</file>
+            <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/Register.java</file>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/Login.java</file>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/FormPilih.java</file>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/Details.java</file>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/TodoList.java</file>
+            <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/FormMember.java</file>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/MainMenu.java</file>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/gymClass/Koneksi.java</file>
-            <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/GUI/Dummy.java</file>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/gymClass/Training.java</file>
             <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/gymClass/Instructor.java</file>
+            <file>file:/E:/KULIAH/SMT%203/OOP/PLAYGROUND/NETBEANS/GymDashboard%20(3)/GymDashboard/GymDashboard/src/gymClass/Member.java</file>
         </group>
     </open-files>
 </project-private>
